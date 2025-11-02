@@ -27,7 +27,7 @@ export default function WorksheetApp() {
     }
   }, [name]);
 
-  // ✅ Load saved scores safely from localStorage
+  // Load saved scores safely from localStorage
   useEffect(() => {
     try {
       const raw = localStorage.getItem("scores");
@@ -43,7 +43,7 @@ export default function WorksheetApp() {
     }
   }, []);
 
-  // ✅ Save scores whenever scoreboard changes
+  // Save scores whenever scoreboard changes
   useEffect(() => {
     localStorage.setItem("scores", JSON.stringify(scoreboard));
   }, [scoreboard]);
