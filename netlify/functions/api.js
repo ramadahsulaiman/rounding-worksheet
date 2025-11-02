@@ -2,13 +2,16 @@ import express from "express";
 import serverless from "serverless-http";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Create Express app
 const app = express();
 app.use(express.json());
 
 // Data file path
-const __dirname = path.resolve();
 const DATA_FILE = path.join(__dirname, "scores.json");
 
 // Helper functions to read and write scores
