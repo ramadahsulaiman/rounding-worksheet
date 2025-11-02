@@ -1,4 +1,4 @@
-# Rounding Worksheet (React + Express)
+# Rounding Worksheet (React)
 
 ---
 
@@ -22,10 +22,8 @@
 |-------|-------------|
 | Frontend | React (Vite) |
 | Styling | CSS3 (Custom, no frameworks) |
-| Backend | Express.js + Node.js |
-| API | REST JSON (CORS-enabled) |
 | Animation | CSS keyframes + canvas-confetti |
-| Deployment | Render / Vercel / Netlify |
+| Deployment | Netlify |
 
 ---
 

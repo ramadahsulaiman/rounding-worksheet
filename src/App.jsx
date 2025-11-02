@@ -1,11 +1,9 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { QUESTIONS, useSelections } from "./utils/worksheetUtils.js";
 import QuestionCard from "./components/QuestionCard.jsx";
-import { API_BASE } from "./config.js";
 import confetti from "canvas-confetti";
 import "./index.css";
 
-// Main application component
 export default function WorksheetApp() {
   const { selections, set, clear } = useSelections();
   const [name, setName] = useState("");
@@ -14,12 +12,12 @@ export default function WorksheetApp() {
   const [shakeName, setShakeName] = useState(false);
   const [scoreboard, setScoreboard] = useState([]);
   const nameInputRef = useRef(null);
-  const [nameWarning, setNameWarning] = useState(false);
+  const [nameWarning, setNameWarning] = useState("");
 
-  // Count of answered questions
+  // Count answered questions
   const answeredCount = useMemo(() => Object.keys(selections).length, [selections]);
 
-  // Reset quiz when new player enters name after submit
+  // Reset quiz when new player name entered after submit
   useEffect(() => {
     if (submitted && name.trim()) {
       clear();
@@ -29,38 +27,49 @@ export default function WorksheetApp() {
     }
   }, [name]);
 
-  // Load scores from backend
+  // ✅ Load saved scores safely from localStorage
   useEffect(() => {
-    fetch(`${API_BASE}/scores`)
-      .then((r) => r.json())
-      .then((list) => setScoreboard(list))
-      .catch(() => {});
+    try {
+      const raw = localStorage.getItem("scores");
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setScoreboard(parsed);
+      } else {
+        localStorage.removeItem("scores");
+      }
+    } catch {
+      console.warn("Invalid or corrupted localStorage data — resetting.");
+      localStorage.removeItem("scores");
+    }
   }, []);
 
-  // Handle submit
-  async function handleSubmit(e) {
+  // ✅ Save scores whenever scoreboard changes
+  useEffect(() => {
+    localStorage.setItem("scores", JSON.stringify(scoreboard));
+  }, [scoreboard]);
+
+  // Submit handler
+  function handleSubmit(e) {
     e.preventDefault();
     if (!name.trim()) {
-      setNameWarning("Please enter your name before submit.");
+      setNameWarning("Please enter your name before submitting.");
       setShakeName(true);
       setTimeout(() => setShakeName(false), 600);
-      window.scrollTo({ top: 0, behavior: "smooth" }); // scrolls up to show warning
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    setNameWarning(null);
-// Calculate score
+    setNameWarning("");
+
+    // Calculate score
     const totalScore = QUESTIONS.reduce(
       (acc, q) => acc + (selections[q.id] === q.answer ? 1 : 0),
       0
     );
-
     setScore(totalScore);
     setSubmitted(true);
-    setScore(totalScore);
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" }); // scrolls up to show score
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // Score-based confetti
+    // Confetti based on performance
     if (totalScore >= 9) {
       confetti({ particleCount: 150, spread: 100, colors: ["#00ff9d", "#00d4ff", "#007aff"], origin: { y: 0.6 } });
     } else if (totalScore >= 5) {
@@ -69,27 +78,14 @@ export default function WorksheetApp() {
       confetti({ particleCount: 50, spread: 50, colors: ["#ff4d4d", "#ff9999", "#ff6666"], origin: { y: 0.6 }, scalar: 0.8 });
     }
 
-    // Save to backend
-    try {
-      await fetch(`${API_BASE}/scores`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, score: totalScore }),
-      });
-    } catch {}
-
-    // Refresh scoreboard
-    try {
-      const res = await fetch(`${API_BASE}/scores`);
-      const list = await res.json();
-      setScoreboard(list);
-    } catch {
-      setScoreboard((prev) =>
-        [...prev, { name, score: totalScore }].sort((a, b) => b.score - a.score)
-      );
-    }
+    // Update scoreboard (local only)
+    const newEntry = { name, score: totalScore };
+    setScoreboard(prev =>
+      [...prev, newEntry].sort((a, b) => b.score - a.score).slice(0, 100)
+    );
   }
 
+  // Reset handler
   function handleReset() {
     clear();
     setScore(null);
@@ -129,9 +125,9 @@ export default function WorksheetApp() {
 
         {submitted && (
           <p className="feedback">
-            {score < 5 && "Don't worry, try again — practice makes perfect!"}
+            {score < 5 && "Don't worry, try again. Practice makes perfect!"}
             {score >= 5 && score < 9 && "Good job! Keep it up!"}
-            {score >= 9 && "🎉 Excellent work!"}
+            {score >= 9 && "Excellent work!"}
           </p>
         )}
       </header>
@@ -150,12 +146,19 @@ export default function WorksheetApp() {
           ))}
 
           <div className="actions">
-            <button type="button" className="btn secondary" onClick={handleReset}>Reset</button>
-            <button type="submit" className="btn primary">Submit</button>
+            <button type="button" className="btn secondary" onClick={handleReset}>
+              Reset
+            </button>
+            <button type="submit" className="btn primary">
+              Submit
+            </button>
           </div>
 
           <div className="tiny-note">
-            Copyright: <a href="https://www.mathinenglish.com" target="_blank">www.mathinenglish.com</a>
+            Copyright:{" "}
+            <a href="https://www.mathinenglish.com" target="_blank" rel="noreferrer">
+              www.mathinenglish.com
+            </a>
           </div>
         </form>
 
@@ -163,11 +166,11 @@ export default function WorksheetApp() {
           <h3><span>🏆</span> Scoreboard</h3>
           <ul>
             {scoreboard.map((entry, i) => {
-              const isTopScorer = i === 0;
+              const isTop = i === 0;
               return (
-                <li key={i} className={`board-item ${isTopScorer ? "top-scorer" : ""}`}>
-                  <div className={`avatar ${isTopScorer ? "crowned" : ""}`}>
-                    {isTopScorer ? "👑" : entry.name.charAt(0).toUpperCase()}
+                <li key={i} className={`board-item ${isTop ? "top-scorer" : ""}`}>
+                  <div className={`avatar ${isTop ? "crowned" : ""}`}>
+                    {isTop ? "👑" : entry.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="board-info">
                     <span className="board-name">{entry.name}</span>
