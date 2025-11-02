@@ -1,0 +1,365 @@
+/* global css color */
+:root {
+  --bg1: #eef6ff;
+  --bg2: #ffffff;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --ok: #16a34a;
+  --bad: #dc2626;
+  --border: #e5e7eb;
+}
+
+/* base style */
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2));
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.page {
+  width: min(1100px, 95vw);
+  margin: 24px auto;
+  padding: 24px;
+}
+
+/* header */
+.header-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.status-top {
+  text-align: right;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.title-pill {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 12px 20px;
+  border-radius: 999px;
+  width: fit-content;
+  margin: 10px auto;
+  animation: float 6s ease-in-out infinite;
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+}
+
+/* name and score */
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.name-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.name-field input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  outline: none;
+}
+.name-field input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.score-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5ff;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--primary-dark);
+}
+.score-badge strong {
+  font-size: 2rem;
+  color: var(--primary-dark);
+  animation: scorePop 0.5s ease;
+}
+
+/* layout and grid */
+.layout {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.grid {
+  flex: 3;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+/* scoreboard */
+.scoreboard {
+  flex: 1;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  min-width: 250px;
+}
+
+.scoreboard h3 {
+  text-align: center;
+  margin-top: 0;
+  color: var(--primary-dark);
+}
+
+.scoreboard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.board-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.board-item:hover {
+  transform: translateY(-2px);
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.board-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.board-name {
+  font-weight: 600;
+}
+
+.board-score {
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+/* Highlight top scorer */
+.top-scorer {
+  background: #f0f9ff;
+  border: 2px solid #38bdf8;
+  border-radius: 8px;
+}
+.top-scorer .avatar {
+  background: gold;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+/* questions */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.prompt {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.qno {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background: var(--primary-dark);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  font-size: 0.8rem;
+  margin-right: 8px;
+}
+
+/* selection */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.option:hover {
+  background: #dbeafe;
+  transform: scale(1.01);
+}
+.option.correct {
+  background: #dcfce7;
+  border: 1px solid #22c55e;
+}
+.option.wrong {
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+}
+
+/* button action */
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 10px;
+}
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn.primary {
+  background: var(--primary);
+  color: white;
+}
+.btn.primary:hover {
+  background: var(--primary-dark);
+}
+.btn.secondary {
+  background: #f3f4f6;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn.secondary:hover {
+  background: #e5e7eb;
+}
+
+/* copyright */
+.tiny-note {
+  grid-column: 1 / -1;      
+  text-align: center;        
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 14px;
+  width: 100%;               
+}
+.tiny-note a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.tiny-note a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.feedback {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 8px;
+  color: var(--primary-dark);
+}
+
+.warning {
+  color: #dc2626; /* red-600 */
+  font-size: 0.9rem;
+  margin-top: 4px;
+  white-space: nowrap;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* animation */
+@keyframes float {
+  0%, 100% { transform: translateY(-4px); }
+  50% { transform: translateY(2px); }
+}
+
+@keyframes scorePop {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+.shake {
+  animation: shake 0.6s ease;
+}
+
+/* responsive */
+@media (max-width: 880px) {
+  .layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .scoreboard {
+    width: 100%;
+    order: 2;
+  }
+  .grid {
+    order: 1;
+    width: 100%;
+  }
+}
